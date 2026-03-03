@@ -48,3 +48,7 @@ plasma_index/
 # Project specific
 test_playground/
 plasma_repo/
+
+# Frontend
+web/node_modules/
+web/dist/

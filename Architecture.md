@@ -6,19 +6,24 @@
 
 ```mermaid
 graph TD
-    User[Пользователь] --> Agent[src.agent]
+    User[Пользователь] --> WebUI[React Chat UI]
+    User --> Agent[src.agent CLI]
     User --> IDE[Cursor/IDE]
-    IDE --> Server[src.server]
+    
+    WebUI --> WebAPI[src.web_api FastAPI]
+    IDE --> Server[src.server MCP]
     
     subgraph Core [Ядро Системы]
-        Agent --> RAG[src.core.rag]
+        WebAPI --> RAG[src.core.rag]
+        Agent --> RAG
         Server --> RAG
         RAG --> Index[Whoosh Index]
         Index --> Docs[plasma_repo/docs]
     end
     
     subgraph External [Внешние сервисы]
-        Agent --> Giga[GigaChat API]
+        WebAPI --> Giga[GigaChat API]
+        Agent --> Giga
     end
 ```
 
@@ -32,7 +37,13 @@ graph TD
 - CLI-приложение на базе **GigaChat**.
 - Использует инструменты RAG для поиска ответов на вопросы пользователя прямо в терминале.
 
-### 3. MCP Сервер (`src/server.py`)
+### 3. Web Chat UI (`web/` + `src/web_api.py`)
+- React-приложение с чат-интерфейсом.
+- Подсветка синтаксиса кода с копированием.
+- Визуализация дизайн-токенов (цветовые свотчи).
+- FastAPI бэкенд (`src/web_api.py`) с эндпоинтами `/api/chat`, `/api/tokens`, `/api/components`.
+
+### 4. MCP Сервер (`src/server.py`)
 - Реализован на базе **FastMCP**.
 - Предоставляет инструменты (`ask_plasma`, `get_token`, `list_components`) для внешних клиентов.
 - Использует транспорт **Streamable HTTP** на эндпоинте `/mcp`.
